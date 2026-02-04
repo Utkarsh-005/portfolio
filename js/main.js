@@ -23,23 +23,25 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-// ================= OBJECT =================
-const geometry = new THREE.TorusKnotGeometry(1, 0.35, 120, 16)
+// ================= OBJECT (TEMP BASIC SHAPE) =================
+// We use a simple shape for now. Later we’ll replace it with your final model.
+const geometry = new THREE.IcosahedronGeometry(1.2, 1)
 const material = new THREE.MeshStandardMaterial({
   color: 0x00ffff,
-  metalness: 0.8,
-  roughness: 0.25
+  metalness: 0.6,
+  roughness: 0.3
 })
 
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
 // ================= LIGHTS =================
-scene.add(new THREE.AmbientLight(0xffffff, 0.5))
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
+scene.add(ambientLight)
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 1)
-dirLight.position.set(3, 3, 3)
-scene.add(dirLight)
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+directionalLight.position.set(3, 3, 3)
+scene.add(directionalLight)
 
 // ================= MOUSE PARALLAX =================
 const mouse = {
@@ -52,19 +54,30 @@ window.addEventListener('mousemove', (event) => {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 })
 
+// ================= SCROLL CONTROL =================
+let scrollY = window.scrollY
+
+window.addEventListener('scroll', () => {
+  scrollY = window.scrollY
+})
+
 // ================= ANIMATION LOOP =================
 const clock = new THREE.Clock()
 
 function animate() {
   const elapsedTime = clock.getElapsedTime()
 
-  // Object rotation
-  mesh.rotation.x = elapsedTime * 0.25
-  mesh.rotation.y = elapsedTime * 0.4
+  // Rotate object slowly
+  mesh.rotation.x = elapsedTime * 0.2
+  mesh.rotation.y = elapsedTime * 0.35
 
-  // Smooth camera movement
+  // Scroll-based depth
+  camera.position.z = 4 + scrollY * 0.001
+
+  // Smooth mouse parallax
   camera.position.x += (mouse.x * 0.8 - camera.position.x) * 0.05
   camera.position.y += (mouse.y * 0.8 - camera.position.y) * 0.05
+
   camera.lookAt(mesh.position)
 
   renderer.render(scene, camera)
