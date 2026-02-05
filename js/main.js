@@ -23,31 +23,15 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-// ================= OBJECT (TEMP BASIC SHAPE) =================
-// We use a simple shape for now. Later we’ll replace it with your final model.
-const geometry = new THREE.IcosahedronGeometry(1.2, 1)
-const material = new THREE.MeshStandardMaterial({
-  color: 0x00ffff,
-  metalness: 0.6,
-  roughness: 0.3
-})
+// ================= LIGHTS (SUBTLE, FOR FUTURE) =================
+scene.add(new THREE.AmbientLight(0xffffff, 0.4))
 
-const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh)
-
-// ================= LIGHTS =================
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
-scene.add(ambientLight)
-
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6)
 directionalLight.position.set(3, 3, 3)
 scene.add(directionalLight)
 
 // ================= MOUSE PARALLAX =================
-const mouse = {
-  x: 0,
-  y: 0
-}
+const mouse = { x: 0, y: 0 }
 
 window.addEventListener('mousemove', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1
@@ -62,23 +46,15 @@ window.addEventListener('scroll', () => {
 })
 
 // ================= ANIMATION LOOP =================
-const clock = new THREE.Clock()
-
 function animate() {
-  const elapsedTime = clock.getElapsedTime()
-
-  // Rotate object slowly
-  mesh.rotation.x = elapsedTime * 0.2
-  mesh.rotation.y = elapsedTime * 0.35
-
   // Scroll-based depth
   camera.position.z = 4 + scrollY * 0.001
 
   // Smooth mouse parallax
-  camera.position.x += (mouse.x * 0.8 - camera.position.x) * 0.05
-  camera.position.y += (mouse.y * 0.8 - camera.position.y) * 0.05
+  camera.position.x += (mouse.x * 0.6 - camera.position.x) * 0.05
+  camera.position.y += (mouse.y * 0.6 - camera.position.y) * 0.05
 
-  camera.lookAt(mesh.position)
+  camera.lookAt(0, 0, 0)
 
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
